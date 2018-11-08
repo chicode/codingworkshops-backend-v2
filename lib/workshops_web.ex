@@ -24,6 +24,7 @@ defmodule WorkshopsWeb do
       import Plug.Conn
       import WorkshopsWeb.Gettext
       alias WorkshopsWeb.Router.Helpers, as: Routes
+      import WorkshopsWeb.Auth, only: [authenticate_user: 2]
     end
   end
 

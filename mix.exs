@@ -33,14 +33,17 @@ defmodule Workshops.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.0-rc"},
+      {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.0-rc"},
       {:postgrex, ">= 0.0.0-rc"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:comeonin, "~> 4.1.1"},
+      {:bcrypt_elixir, "~> 1.0"},
+      {:guardian, "~> 1.1"}
     ]
   end
 
