@@ -1,8 +1,9 @@
 defmodule Workshops.User do
   use Ecto.Schema
   import Ecto.Changeset
+  import Workshops.Helpers
 
-  @derive {Jason.Encoder, only: [:username, :first_name, :last_name, :email, :bio]}
+  @derive {Jason.Encoder, only: [:username, :first_name, :last_name, :email, :bio, :id]}
   schema "users" do
     field :username, :string
     field :first_name, :string
@@ -11,6 +12,7 @@ defmodule Workshops.User do
     field :bio, :string
     field :password, :string, virtual: true
     field :password_hash, :string
+    has_many :workshops, Workshops.Workshop
 
     timestamps()
   end
@@ -18,20 +20,16 @@ defmodule Workshops.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:first_name, :last_name, :email, :password, :bio, :username])
+    |> validate_required([:first_name, :last_name, :email, :password, :username])
     |> validate_length(:username, min: 1, max: 20)
-    |> validate_required([:first_name, :last_name, :email, :password])
+    |> custom_validation(:email, &valid_email?/1, "Invalid email address")
     |> unique_constraint(:username)
     |> validate_length(:password, min: 6, max: 50)
-    |> put_pass_hash()
+    |> custom_change(:password, :put_pass_hash, &Comeonin.Bcrypt.hashpwsalt/1)
   end
 
-  defp put_pass_hash(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
-
-      _ ->
-        changeset
-    end
+  defp valid_email?(email) do
+    ~r/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    |> Regex.match?(email)
   end
 end

@@ -12,7 +12,7 @@ defmodule WorkshopsWeb.SessionController do
         |> put_status(:created)
         |> render("show.json", jwt: jwt, user: user)
 
-      :error ->
+      {:error, _} ->
         conn
         |> put_status(:unprocessable_entity)
         |> render("error.json", error: "Incorrect email or password!")

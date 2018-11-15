@@ -20,7 +20,8 @@ defmodule WorkshopsWeb.Auth do
 
   def process_token(conn, _opts) do
     with %{"jwt" => jwt} <- conn.params,
-         {:ok, user} <- Workshops.Guardian.decode_and_verify(jwt) do
+         {:ok, claims} <- Workshops.Guardian.decode_and_verify(jwt) do
+      {:ok, user} = Workshops.Guardian.resource_from_claims(claims)
       assign(conn, :user, user)
     else
       _ -> assign(conn, :user, nil)

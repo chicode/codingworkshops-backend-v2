@@ -19,7 +19,10 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   def create(conn, %{"workshop" => workshop_params}) do
-    changeset = Workshop.changeset(%Workshop{}, workshop_params)
+    changeset =
+      conn.assigns.user
+      |> Ecto.build_assoc(:workshops)
+      |> Workshop.changeset(workshop_params)
 
     with {:ok, %Workshop{} = workshop} <- Repo.insert(changeset) do
       conn
@@ -32,7 +35,8 @@ defmodule WorkshopsWeb.WorkshopController do
     workshop = Repo.get!(Workshop, id)
     changeset = Workshop.changeset(workshop, workshop_params)
 
-    with {:ok, %Workshop{} = workshop} <- Repo.update(changeset) do
+    with {:ok} <- verify_ownership(conn, workshop),
+         {:ok, %Workshop{} = workshop} <- Repo.update(changeset) do
       render(conn, "show.json", workshop: workshop)
     end
   end
@@ -42,6 +46,16 @@ defmodule WorkshopsWeb.WorkshopController do
 
     with {:ok, %Workshop{}} <- Repo.delete(workshop) do
       send_resp(conn, :no_content, "")
+    end
+  end
+
+  defp verify_ownership(conn, workshop) do
+    workshop = Repo.preload(workshop, :user)
+
+    if workshop.user == conn.assigns.user do
+      {:ok}
+    else
+      {:error, :unauthorized}
     end
   end
 end
