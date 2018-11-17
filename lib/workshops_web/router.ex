@@ -13,6 +13,8 @@ defmodule WorkshopsWeb.Router do
     scope "/v1" do
       resources "/users", UserController, except: [:new, :edit]
       resources "/workshops", WorkshopController, except: [:new, :edit]
+      resources "/lessons", LessonController, only: [:show]
+      post "/workshops/:id/load", WorkshopController, :load
       post "/sessions", SessionController, :create
     end
   end

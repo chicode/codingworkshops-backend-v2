@@ -7,8 +7,4 @@ defmodule WorkshopsWeb.SessionView do
       user: user
     }
   end
-
-  def render("error.json", %{error: error}) do
-    %{error: error}
-  end
 end

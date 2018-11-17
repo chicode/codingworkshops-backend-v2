@@ -7,16 +7,25 @@ defmodule WorkshopsWeb.FallbackController do
   use WorkshopsWeb, :controller
 
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    errors = Ecto.Changeset.traverse_errors(changeset, &Workshops.ErrorHelpers.translate_error/1)
+
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(WorkshopsWeb.ChangesetView)
-    |> render("error.json", changeset: changeset)
+    |> json(%{errors: errors})
   end
 
-  def call(conn, {:error, :not_found}) do
+  def call(conn, {:error, status}) when is_atom(status) do
     conn
-    |> put_status(:not_found)
-    |> put_view(WorkshopsWeb.ErrorView)
-    |> render(:"404")
+    |> send_resp(status, "")
+  end
+
+  def call(conn, {:error, error}) do
+    conn
+    |> send_resp(:bad_request, %{error: error})
+  end
+
+  def call(conn, :ok) do
+    conn
+    |> send_resp(:ok, "")
   end
 end

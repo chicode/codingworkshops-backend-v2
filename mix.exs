@@ -43,7 +43,10 @@ defmodule Workshops.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:comeonin, "~> 4.1.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:guardian, "~> 1.1"}
+      {:guardian, "~> 1.1"},
+      {:yaml_elixir, "~> 2.0"},
+      {:httpoison, "~> 1.4"},
+      {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false}
     ]
   end
 

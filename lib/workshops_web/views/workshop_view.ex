@@ -11,6 +11,6 @@ defmodule WorkshopsWeb.WorkshopView do
   end
 
   def render("workshop.json", %{workshop: workshop}) do
-    workshop
+    require IEx
   end
 end

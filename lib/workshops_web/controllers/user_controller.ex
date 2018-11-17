@@ -1,8 +1,7 @@
 defmodule WorkshopsWeb.UserController do
   use WorkshopsWeb, :controller
 
-  alias Workshops.User
-  alias Workshops.Repo
+  alias Workshops.{User, Repo}
 
   action_fallback WorkshopsWeb.FallbackController
 

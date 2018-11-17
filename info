@@ -1,0 +1,190 @@
+ Current Filetype: elixir
+Available Linters: ['credo', 'dialyxir', 'dogma', 'mix']
+  Enabled Linters: ['credo', 'mix']
+ Suggested Fixers: 
+  'mix_format' - Apply mix format to a file.
+  'remove_trailing_lines' - Remove all blank lines at the end of a file.
+  'trim_whitespace' - Remove all trailing whitespace characters at the end of every line.
+ Linter Variables:
+
+let g:ale_elixir_credo_options = '--strict'
+ Global Variables:
+
+let g:ale_cache_executable_check_failures = v:null
+let g:ale_change_sign_column_color = 0
+let g:ale_command_wrapper = ''
+let g:ale_completion_delay = v:null
+let g:ale_completion_enabled = 0
+let g:ale_completion_max_suggestions = v:null
+let g:ale_echo_cursor = 1
+let g:ale_echo_msg_error_str = 'Error'
+let g:ale_echo_msg_format = '%code: %%s'
+let g:ale_echo_msg_info_str = 'Info'
+let g:ale_echo_msg_warning_str = 'Warning'
+let g:ale_enabled = 1
+let g:ale_fix_on_save = 1
+let g:ale_fixers = {'elixir': ['mix_format'], 'vue': ['eslint'], 'html': ['prettier'], 'javascript': ['prettier', 'eslint'], 'python': ['yapf']}
+let g:ale_history_enabled = 1
+let g:ale_history_log_output = 1
+let g:ale_keep_list_window_open = 0
+let g:ale_lint_delay = 200
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_filetype_changed = 1
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_lint_on_insert_leave = 0
+let g:ale_linter_aliases = {}
+let g:ale_linters = {'elixir': ['mix', 'credo'], 'javascript': ['eslint'], 'ocaml': ['merlin'], 'python': ['pylint']}
+let g:ale_linters_explicit = 0
+let g:ale_list_window_size = 10
+let g:ale_list_vertical = 0
+let g:ale_loclist_msg_format = '%code: %%s'
+let g:ale_max_buffer_history_size = 20
+let g:ale_max_signs = -1
+let g:ale_maximum_file_size = v:null
+let g:ale_open_list = 0
+let g:ale_pattern_options = {}
+let g:ale_pattern_options_enabled = 0
+let g:ale_set_balloons = 0
+let g:ale_set_highlights = 1
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
+let g:ale_set_signs = 1
+let g:ale_sign_column_always = 0
+let g:ale_sign_error = '>>'
+let g:ale_sign_info = '--'
+let g:ale_sign_offset = 1000000
+let g:ale_sign_style_error = '>>'
+let g:ale_sign_style_warning = '--'
+let g:ale_sign_warning = '--'
+let g:ale_statusline_format = v:null
+let g:ale_type_map = {}
+let g:ale_use_global_executables = v:null
+let g:ale_warn_about_trailing_blank_lines = 1
+let g:ale_warn_about_trailing_whitespace = 1
+  Command History:
+
+(executable check - success) mix
+(started) ['/bin/zsh', '-c', 'mix help credo && mix credo suggest --format=flycheck --read-from-stdin ''/home/anton/code/phoenix/workshops/lib/workshops_web/controllers/workshop_controller.ex'' < ''/tmp/nvimWQII1P/1/workshop_controller.ex''']
+(started) ['/bin/zsh', '-c', 'cd ''/home/anton/code/phoenix/workshops'' && MIX_BUILD_PATH=''/tmp/nvimWQII1P/3'' mix compile ''/home/anton/code/phoenix/workshops/lib/workshops_web/controllers/workshop_controller.ex''']
+(started) ['/bin/zsh', '-c', 'mix help credo && mix credo suggest --format=flycheck --read-from-stdin ''/home/anton/code/phoenix/workshops/lib/workshops_web/controllers/workshop_controller.ex'' < ''/tmp/nvimWQII1P/6/workshop_controller.ex''']
+(finished - exit code 0) ['/bin/zsh', '-c', 'cd ''/home/anton/code/phoenix/workshops'' && MIX_BUILD_PATH=''/tmp/nvimWQII1P/7'' mix compile ''/home/anton/code/phoenix/workshops/lib/workshops_web/controllers/workshop_controller.ex''']
+
+<<<OUTPUT STARTS>>>
+===> Compiling parse_trans
+==> base64url (compile)
+===> Compiling mimerl
+===> Compiling yamerl
+==> connection
+Compiling 1 file (.ex)
+Generated connection app
+===> Compiling metrics
+==> bunt
+Compiling 2 files (.ex)
+Generated bunt app
+===> Compiling unicode_util_compat
+===> Compiling idna
+==> gettext
+Compiling 1 file (.erl)
+Compiling 20 files (.ex)
+Generated gettext app
+==> jose
+Compiling 89 files (.erl)
+src/jose_public_key.erl:44: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+src/jose_public_key.erl:60: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+src/jose_public_key.erl:84: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+src/jose_public_key.erl:107: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+src/jose_public_key.erl:122: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+src/jose_public_key.erl:234: Warning: erlang:get_stacktrace/0: deprecated; use the new try/catch syntax for retrieving the stack backtrace
+Compiling 8 files (.ex)
+Generated jose app
+===> Compiling ranch
+==> telemetry
+Compiling 3 files (.ex)
+Generated telemetry app
+==> decimal
+Compiling 1 file (.ex)
+Generated decimal app
+==> jason
+Compiling 8 files (.ex)
+Generated jason app
+==> poison
+Compiling 4 files (.ex)
+Generated poison app
+==> ssl_verify_fun
+Compiling 7 files (.erl)
+Generated ssl_verify_fun app
+==> yaml_elixir
+Compiling 3 files (.ex)
+Generated yaml_elixir app
+==> elixir_make
+Compiling 1 file (.ex)
+Generated elixir_make app
+==> bcrypt_elixir
+make: Nothing to be done for 'all'.
+Compiling 3 files (.ex)
+Generated bcrypt_elixir app
+==> comeonin
+Compiling 2 files (.ex)
+Generated comeonin app
+===> Compiling certifi
+===> Compiling hackney
+==> db_connection
+Compiling 16 files (.ex)
+Generated db_connection app
+==> httpoison
+Compiling 3 files (.ex)
+Generated httpoison app
+==> credo
+Compiling 181 files (.ex)
+Generated credo app
+==> ecto
+Compiling 54 files (.ex)
+Generated ecto app
+==> phoenix_pubsub
+Compiling 13 files (.ex)
+Generated phoenix_pubsub app
+===> Compiling cowlib
+===> Compiling cowboy
+==> mime
+Compiling 2 files (.ex)
+Generated mime app
+==> postgrex
+Compiling 61 files (.ex)
+Generated postgrex app
+==> ecto_sql
+Compiling 23 files (.ex)
+Generated ecto_sql app
+==> plug_crypto
+Compiling 4 files (.ex)
+Generated plug_crypto app
+==> plug
+Compiling 1 file (.erl)
+Compiling 38 files (.ex)
+Generated plug app
+==> plug_cowboy
+Compiling 5 files (.ex)
+Generated plug_cowboy app
+==> phoenix
+Compiling 67 files (.ex)
+Generated phoenix app
+==> guardian
+Compiling 19 files (.ex)
+Generated guardian app
+==> phoenix_ecto
+Compiling 6 files (.ex)
+Generated phoenix_ecto app
+==> workshops
+Compiling 26 files (.ex)
+Generated workshops app
+<<<OUTPUT ENDS>>>
+
+(finished - exit code 0) ['/bin/zsh', '-c', 'mix help credo && mix credo suggest --format=flycheck --read-from-stdin ''/home/anton/code/phoenix/workshops/lib/workshops_web/controllers/workshop_controller.ex'' < ''/tmp/nvimWQII1P/8/workshop_controller.ex''']
+
+<<<OUTPUT STARTS>>>
+# mix credo
+
+Run code analysis (use `--help` for options)
+
+Location: _build/dev/lib/credo/ebin
+<<<OUTPUT ENDS>>>
