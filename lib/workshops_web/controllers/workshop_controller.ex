@@ -1,7 +1,10 @@
+require IEx
+
 defmodule WorkshopsWeb.WorkshopController do
   use WorkshopsWeb, :controller
 
   alias Workshops.{Workshop, Repo}
+  alias Ecto.Multi
 
   action_fallback WorkshopsWeb.FallbackController
 
@@ -29,7 +32,7 @@ defmodule WorkshopsWeb.WorkshopController do
       |> Ecto.build_assoc(:workshops)
       |> Workshop.changeset(workshop_params)
 
-    with {:ok, %Workshop{} = workshop} <- Repo.insert(changeset) do
+    with {:ok, %Workshop{}} <- Repo.insert(changeset) do
       send_resp(conn, :created, "")
     end
   end
@@ -39,7 +42,7 @@ defmodule WorkshopsWeb.WorkshopController do
     changeset = Workshop.changeset(workshop, workshop_params)
 
     with {:ok} <- verify_ownership(conn, workshop),
-         {:ok} <- Repo.update(changeset) do
+         {:ok, %Workshop{}} <- Repo.update(changeset) do
       send_resp(conn, :ok, "")
     end
   end
@@ -61,14 +64,11 @@ defmodule WorkshopsWeb.WorkshopController do
         {:ok, %HTTPoison.Response{body: body}} ->
           case YamlElixir.read_from_string(body) do
             {:ok, yaml} ->
-              changeset = Workshop.changeset(workshop, yaml)
-
-              with {:ok, workshop} <- Repo.update(changeset) do
-                load_section(workshop, [
-                  {Lesson, :lessons},
-                  {Slide, :slides},
-                  {Direction, :directions}
-                ])
+              # this check is necessary in case the yaml has numbered keys
+              if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
+                reset_workshop(workshop, yaml)
+              else
+                {:error, "Malformed yaml"}
               end
 
             {:error} ->
@@ -81,26 +81,66 @@ defmodule WorkshopsWeb.WorkshopController do
     end
   end
 
-  defp load_section(parent, [{child_module, parent_children} | sections]) do
-    parent
-    |> Repo.preload(parent_children)
-    |> Map.get(parent_children)
-    |> Enum.with_index()
-    |> Enum.each(fn {i, child} ->
-      changeset =
-        apply(child_module, :changeset, [
-          Ecto.build_assoc(parent, parent_children),
-          %{child | index: i}
-        ])
+  defp reset_workshop(workshop, data) do
+    import Ecto.Query
 
-      with {:ok, item} = Repo.insert(changeset) do
-        load_section(item, sections)
-      end
+    changeset = Workshop.changeset(workshop, data)
+
+    Multi.new()
+    |> Multi.delete_all(
+      :delete,
+      from(l in Workshops.Lesson,
+        join: w in assoc(l, :workshop),
+        where: w.id == ^workshop.id
+      )
+    )
+    |> Multi.update(0, changeset)
+    |> load_section(data, 0, [
+      {Workshops.Lesson, :lessons},
+      {Workshops.Slide, :slides},
+      {Workshops.Direction, :directions}
+    ])
+    |> Repo.transaction()
+  end
+
+  defp load_section(multi, data, change_i, [{child_module, parent_children} | sections]) do
+    Multi.run(multi, {parent_children, change_i}, fn _repo, changes ->
+      # IEx.pry()
+
+      data
+      # the yaml needs to store each child section as the assoc name (eg "lessons" in workshop)
+      |> Map.get(Atom.to_string(parent_children))
+      |> Enum.with_index()
+      |> Enum.reduce(Multi.new(), fn {child, i}, multi ->
+        changeset =
+          apply(child_module, :changeset, [
+            Ecto.build_assoc(changes[change_i], parent_children),
+            Map.merge(
+              # directions are written as strings, not objects,
+              # because currently their only property is a description
+              if is_map(child) do
+                child
+              else
+                %{"description" => child}
+              end,
+              %{"index" => i}
+            )
+          ])
+
+        IO.inspect(changeset)
+
+        multi
+        # i is the name of the change that is then
+        |> Multi.insert(i, changeset)
+        # passed on to the next function call into parameter change_i
+        |> load_section(child, i, sections)
+      end)
+      |> Repo.transaction()
     end)
   end
 
-  defp load_section(_parent, []) do
-    {:ok}
+  defp load_section(multi, _data, _change_i, []) do
+    multi
   end
 
   defp verify_ownership(conn, workshop) do

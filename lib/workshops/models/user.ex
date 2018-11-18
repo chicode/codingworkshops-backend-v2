@@ -25,7 +25,8 @@ defmodule Workshops.User do
     |> custom_validation(:email, &valid_email?/1, "Invalid email address")
     |> unique_constraint(:username)
     |> validate_length(:password, min: 6, max: 50)
-    |> custom_change(:password, :put_pass_hash, &Comeonin.Bcrypt.hashpwsalt/1)
+    |> custom_change(:password, :password_hash, &Comeonin.Bcrypt.hashpwsalt/1)
+    |> IO.inspect()
   end
 
   defp valid_email?(email) do

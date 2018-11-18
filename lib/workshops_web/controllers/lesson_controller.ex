@@ -9,6 +9,7 @@ defmodule WorkshopsWeb.LessonController do
       |> Repo.get!(id)
       |> Repo.preload(slides: [:directions])
 
-    render(conn, "show.json", lesson: lesson)
+    conn
+    |> json(lesson)
   end
 end

@@ -7,7 +7,8 @@ defmodule WorkshopsWeb.FallbackController do
   use WorkshopsWeb, :controller
 
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
-    errors = Ecto.Changeset.traverse_errors(changeset, &Workshops.ErrorHelpers.translate_error/1)
+    errors =
+      Ecto.Changeset.traverse_errors(changeset, &WorkshopsWeb.ErrorHelpers.translate_error/1)
 
     conn
     |> put_status(:unprocessable_entity)
@@ -21,10 +22,16 @@ defmodule WorkshopsWeb.FallbackController do
 
   def call(conn, {:error, error}) do
     conn
-    |> send_resp(:bad_request, %{error: error})
+    |> put_status(:bad_request)
+    |> json(%{error: error})
   end
 
   def call(conn, :ok) do
+    conn
+    |> send_resp(:ok, "")
+  end
+
+  def call(conn, {:ok, _}) do
     conn
     |> send_resp(:ok, "")
   end

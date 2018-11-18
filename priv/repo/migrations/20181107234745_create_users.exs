@@ -7,7 +7,7 @@ defmodule Workshops.Repo.Migrations.CreateUsers do
       add(:last_name, :string, null: false)
       add(:email, :string, null: false)
       add(:password_hash, :string, null: false)
-      add(:bio, :string)
+      add(:bio, :text)
       add(:username, :string, null: false)
 
       timestamps()

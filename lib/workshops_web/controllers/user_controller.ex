@@ -9,21 +9,19 @@ defmodule WorkshopsWeb.UserController do
 
   def index(conn, _params) do
     users = Repo.all(User)
-    render(conn, "index.json", users: users)
+    json(conn, users)
   end
 
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
-    render(conn, "show.json", user: user)
+    json(conn, user)
   end
 
   def create(conn, %{"user" => user_params}) do
     changeset = User.changeset(%User{}, user_params)
 
     with {:ok, %User{} = user} <- Repo.insert(changeset) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", user: user)
+      send_resp(conn, :created, "")
     end
   end
 
@@ -32,7 +30,7 @@ defmodule WorkshopsWeb.UserController do
     changeset = User.changeset(user, user_params)
 
     with {:ok, %User{} = user} <- Repo.update(changeset) do
-      render(conn, "show.json", user: user)
+      send_resp(conn, :ok, "")
     end
   end
 
@@ -40,7 +38,7 @@ defmodule WorkshopsWeb.UserController do
     user = Repo.get!(User, id)
 
     with {:ok, %User{}} <- Repo.delete(user) do
-      send_resp(conn, :no_content, "")
+      send_resp(conn, :ok, "")
     end
   end
 end

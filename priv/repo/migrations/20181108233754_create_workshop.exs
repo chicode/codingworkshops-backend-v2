@@ -5,7 +5,7 @@ defmodule Workshops.Repo.Migrations.CreateWorkshop do
     create table(:workshops) do
       add(:name, :string)
       add(:slug, :string)
-      add(:description, :string)
+      add(:description, :text)
       add(:source_url, :string)
       add(:user_id, references(:workshops))
 
