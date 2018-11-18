@@ -20,7 +20,7 @@ defmodule WorkshopsWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     changeset = User.changeset(%User{}, user_params)
 
-    with {:ok, %User{} = user} <- Repo.insert(changeset) do
+    with {:ok, _user} <- Repo.insert(changeset) do
       send_resp(conn, :created, "")
     end
   end
@@ -29,7 +29,7 @@ defmodule WorkshopsWeb.UserController do
     user = Repo.get!(User, id)
     changeset = User.changeset(user, user_params)
 
-    with {:ok, %User{} = user} <- Repo.update(changeset) do
+    with {:ok, _user} <- Repo.update(changeset) do
       send_resp(conn, :ok, "")
     end
   end

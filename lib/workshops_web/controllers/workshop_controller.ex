@@ -66,7 +66,10 @@ defmodule WorkshopsWeb.WorkshopController do
             {:ok, yaml} ->
               # this check is necessary in case the yaml has numbered keys
               if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
-                reset_workshop(workshop, yaml)
+                case reset_workshop(workshop, yaml) do
+                  {:ok, _} -> {:ok}
+                  {:error, _name, changeset, _value} -> {:error, changeset}
+                end
               else
                 {:error, "Malformed yaml"}
               end
@@ -94,8 +97,8 @@ defmodule WorkshopsWeb.WorkshopController do
         where: w.id == ^workshop.id
       )
     )
-    |> Multi.update(0, changeset)
-    |> load_section(data, 0, [
+    |> Multi.update(-1, changeset)
+    |> load_section(data, -1, [
       {Workshops.Lesson, :lessons},
       {Workshops.Slide, :slides},
       {Workshops.Direction, :directions}
@@ -104,7 +107,7 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   defp load_section(multi, data, change_i, [{child_module, parent_children} | sections]) do
-    Multi.run(multi, {parent_children, change_i}, fn _repo, changes ->
+    Multi.merge(multi, fn changes ->
       # IEx.pry()
 
       data
@@ -127,7 +130,7 @@ defmodule WorkshopsWeb.WorkshopController do
             )
           ])
 
-        IO.inspect(changeset)
+        IEx.pry()
 
         multi
         # i is the name of the change that is then
@@ -135,7 +138,6 @@ defmodule WorkshopsWeb.WorkshopController do
         # passed on to the next function call into parameter change_i
         |> load_section(child, i, sections)
       end)
-      |> Repo.transaction()
     end)
   end
 

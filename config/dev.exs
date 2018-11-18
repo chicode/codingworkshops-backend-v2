@@ -53,4 +53,5 @@ config :workshops, Workshops.Repo,
   password: "postgres",
   database: "workshops_dev",
   hostname: "localhost",
-  pool_size: 10
+  pool_size: 10,
+  timeout: 999_999
