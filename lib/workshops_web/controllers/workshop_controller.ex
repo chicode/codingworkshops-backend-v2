@@ -82,7 +82,16 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   defp format_loaded(data) when is_map(data) do
-    MapExtras.get_and_update!(data, "lessons", &format_loaded/1)
+    child_section =
+      data
+      |> Map.keys()
+      |> Enum.find(&Enum.member?(["lessons", "slides", "directions"], &1))
+
+    if is_nil(child_section) do
+      data
+    else
+      MapExtras.get_and_update!(data, child_section, &format_loaded/1)
+    end
   end
 
   defp format_loaded(data) when is_list(data) do
@@ -90,23 +99,13 @@ defmodule WorkshopsWeb.WorkshopController do
     |> Enum.with_index()
     |> Enum.map(fn {item, i} ->
       if is_map(item) do
-        child_section =
-          item
-          |> Map.keys()
-          |> Enum.find(&Enum.member?(["slides", "directions"], &1))
-
-        item = Map.merge(item, %{"index" => i})
-
-        if is_nil(child_section) do
-          item
-        else
-          MapExtras.get_and_update!(item, child_section, &format_loaded/1)
-        end
+        format_loaded(item)
       else
         # directions are written as strings, not objects,
         # because currently their only property is a description
-        %{"description" => item, "index" => i}
+        %{"description" => item}
       end
+      |> Map.merge(%{"index" => i})
     end)
   end
 
