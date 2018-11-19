@@ -32,7 +32,7 @@ defmodule WorkshopsWeb.WorkshopController do
       |> Ecto.build_assoc(:workshops)
       |> Workshop.changeset(workshop_params)
 
-    with {:ok, %Workshop{}} <- Repo.insert(changeset) do
+    with {:ok, _workshop} <- Repo.insert(changeset) do
       send_resp(conn, :created, "")
     end
   end
@@ -41,18 +41,16 @@ defmodule WorkshopsWeb.WorkshopController do
     workshop = Repo.get!(Workshop, id)
     changeset = Workshop.changeset(workshop, workshop_params)
 
-    with {:ok} <- verify_ownership(conn, workshop),
-         {:ok, %Workshop{}} <- Repo.update(changeset) do
-      send_resp(conn, :ok, "")
+    with {:ok} <- verify_ownership(conn, workshop) do
+      Repo.update(changeset)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     workshop = Repo.get!(Workshop, id)
 
-    with {:ok} <- verify_ownership(conn, workshop),
-         {:ok, %Workshop{}} <- Repo.delete(workshop) do
-      send_resp(conn, :ok, "")
+    with {:ok} <- verify_ownership(conn, workshop) do
+      Repo.delete(workshop)
     end
   end
 
@@ -66,10 +64,9 @@ defmodule WorkshopsWeb.WorkshopController do
             {:ok, yaml} ->
               # this check is necessary in case the yaml has numbered keys
               if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
-                case reset_workshop(workshop, yaml) do
-                  {:ok, _} -> {:ok}
-                  {:error, _name, changeset, _value} -> {:error, changeset}
-                end
+                workshop
+                |> Workshop.changeset(format_loaded(yaml))
+                |> Repo.update()
               else
                 {:error, "Malformed yaml"}
               end
@@ -84,65 +81,33 @@ defmodule WorkshopsWeb.WorkshopController do
     end
   end
 
-  defp reset_workshop(workshop, data) do
-    import Ecto.Query
-
-    changeset = Workshop.changeset(workshop, data)
-
-    Multi.new()
-    |> Multi.delete_all(
-      :delete,
-      from(l in Workshops.Lesson,
-        join: w in assoc(l, :workshop),
-        where: w.id == ^workshop.id
-      )
-    )
-    |> Multi.update(-1, changeset)
-    |> load_section(data, -1, [
-      {Workshops.Lesson, :lessons},
-      {Workshops.Slide, :slides},
-      {Workshops.Direction, :directions}
-    ])
-    |> Repo.transaction()
+  defp format_loaded(data) when is_map(data) do
+    MapExtras.get_and_update!(data, "lessons", &format_loaded/1)
   end
 
-  defp load_section(multi, data, change_i, [{child_module, parent_children} | sections]) do
-    Multi.merge(multi, fn changes ->
-      # IEx.pry()
+  defp format_loaded(data) when is_list(data) do
+    data
+    |> Enum.with_index()
+    |> Enum.map(fn {item, i} ->
+      if is_map(item) do
+        child_section =
+          item
+          |> Map.keys()
+          |> Enum.find(&Enum.member?(["slides", "directions"], &1))
 
-      data
-      # the yaml needs to store each child section as the assoc name (eg "lessons" in workshop)
-      |> Map.get(Atom.to_string(parent_children))
-      |> Enum.with_index()
-      |> Enum.reduce(Multi.new(), fn {child, i}, multi ->
-        changeset =
-          apply(child_module, :changeset, [
-            Ecto.build_assoc(changes[change_i], parent_children),
-            Map.merge(
-              # directions are written as strings, not objects,
-              # because currently their only property is a description
-              if is_map(child) do
-                child
-              else
-                %{"description" => child}
-              end,
-              %{"index" => i}
-            )
-          ])
+        item = Map.merge(item, %{"index" => i})
 
-        IEx.pry()
-
-        multi
-        # i is the name of the change that is then
-        |> Multi.insert(i, changeset)
-        # passed on to the next function call into parameter change_i
-        |> load_section(child, i, sections)
-      end)
+        if is_nil(child_section) do
+          item
+        else
+          MapExtras.get_and_update!(item, child_section, &format_loaded/1)
+        end
+      else
+        # directions are written as strings, not objects,
+        # because currently their only property is a description
+        %{"description" => item, "index" => i}
+      end
     end)
-  end
-
-  defp load_section(multi, _data, _change_i, []) do
-    multi
   end
 
   defp verify_ownership(conn, workshop) do

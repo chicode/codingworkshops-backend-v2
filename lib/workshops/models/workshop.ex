@@ -12,7 +12,7 @@ defmodule Workshops.Workshop do
     field :source_url, :string
     field :slug, :string
     belongs_to :user, Workshops.User
-    has_many :lessons, Workshops.Lesson
+    has_many :lessons, Workshops.Lesson, on_replace: :delete
 
     timestamps()
   end
@@ -25,6 +25,7 @@ defmodule Workshops.Workshop do
 
   def changeset(workshop, attrs) do
     workshop
+    |> Workshops.Repo.preload(:lessons)
     |> cast(attrs, [:name, :description, :source_url])
     |> validate_required([:name, :description, :source_url])
     |> unique_constraint(:name)
@@ -33,6 +34,7 @@ defmodule Workshops.Workshop do
     |> assoc_constraint(:user)
     |> custom_validation(:source_url, &valid_url?/1, "Invalid URL")
     |> custom_change(:name, :slug, &slugify/1)
+    |> cast_assoc(:lessons)
   end
 
   defp valid_url?(url) do

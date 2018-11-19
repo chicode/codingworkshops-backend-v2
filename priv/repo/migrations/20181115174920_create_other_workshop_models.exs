@@ -6,7 +6,7 @@ defmodule Workshops.Repo.Migrations.CreateOtherWorkshopModels do
       add(:name, :string)
       add(:description, :text)
       add(:index, :integer)
-      add(:workshop_id, references(:lessons, on_delete: :delete_all))
+      add(:workshop_id, references(:workshops, on_delete: :delete_all))
 
       timestamps()
     end
@@ -17,7 +17,7 @@ defmodule Workshops.Repo.Migrations.CreateOtherWorkshopModels do
       add(:name, :string)
       add(:description, :text)
       add(:index, :integer)
-      add(:lesson_id, references(:slides, on_delete: :delete_all))
+      add(:lesson_id, references(:lessons, on_delete: :delete_all))
 
       timestamps()
     end
@@ -27,7 +27,7 @@ defmodule Workshops.Repo.Migrations.CreateOtherWorkshopModels do
     create table(:directions) do
       add(:description, :text)
       add(:index, :integer)
-      add(:slide_id, references(:directions, on_delete: :delete_all))
+      add(:slide_id, references(:slides, on_delete: :delete_all))
 
       timestamps()
     end

@@ -16,11 +16,12 @@ defmodule Workshops.Lesson do
 
   def changeset(lesson, attrs) do
     lesson
+    |> Workshops.Repo.preload(:slides)
     |> cast(attrs, [:name, :description, :index])
     |> validate_required([:name, :description, :index])
     |> unique_constraint(:index, name: :lesson_index)
     |> validate_length(:name, min: 1, max: 60)
-    |> validate_length(:description, min: 1, max: 600)
     |> assoc_constraint(:workshop)
+    |> cast_assoc(:slides)
   end
 end

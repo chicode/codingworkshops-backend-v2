@@ -16,11 +16,12 @@ defmodule Workshops.Slide do
 
   def changeset(slide, attrs) do
     slide
+    |> Workshops.Repo.preload(:directions)
     |> cast(attrs, [:name, :description, :index])
     |> validate_required([:name, :description, :index])
     |> unique_constraint(:index, name: :slide_index)
     |> validate_length(:name, min: 1, max: 60)
-    |> validate_length(:description, min: 1, max: 600)
     |> assoc_constraint(:lesson)
+    |> cast_assoc(:directions)
   end
 end

@@ -25,6 +25,8 @@ defmodule WorkshopsWeb do
       import WorkshopsWeb.Gettext
       alias WorkshopsWeb.Router.Helpers, as: Routes
       import WorkshopsWeb.Auth, only: [authenticate_user: 2]
+      import WorkshopsWeb.Helpers
+      alias WorkshopsWeb.Helpers.MapExtras
     end
   end
 
