@@ -23,10 +23,16 @@ defmodule Workshops.Workshop do
     |> Map.take(@base_properties ++ additional)
   end
 
+  def create_changeset(workshop, attrs) do
+    workshop
+    |> cast(attrs, [:name])
+    |> changeset(attrs)
+  end
+
   def changeset(workshop, attrs) do
     workshop
     |> Workshops.Repo.preload(:lessons)
-    |> cast(attrs, [:name, :description, :source_url])
+    |> cast(attrs, [:description, :source_url])
     |> validate_required([:name, :description, :source_url])
     |> unique_constraint(:name)
     |> validate_length(:name, min: 1, max: 60)

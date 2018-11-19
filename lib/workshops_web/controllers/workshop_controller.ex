@@ -4,7 +4,6 @@ defmodule WorkshopsWeb.WorkshopController do
   use WorkshopsWeb, :controller
 
   alias Workshops.{Workshop, Repo}
-  alias Ecto.Multi
 
   action_fallback WorkshopsWeb.FallbackController
 
@@ -30,11 +29,9 @@ defmodule WorkshopsWeb.WorkshopController do
     changeset =
       conn.assigns.user
       |> Ecto.build_assoc(:workshops)
-      |> Workshop.changeset(workshop_params)
+      |> Workshop.create_changeset(workshop_params)
 
-    with {:ok, _workshop} <- Repo.insert(changeset) do
-      send_resp(conn, :created, "")
-    end
+    Repo.insert(changeset)
   end
 
   def update(conn, %{"id" => id, "workshop" => workshop_params}) do

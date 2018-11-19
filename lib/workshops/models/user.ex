@@ -17,16 +17,22 @@ defmodule Workshops.User do
     timestamps()
   end
 
+  def create_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:username])
+    |> validate_required([:password])
+    |> validate_length(:username, min: 1, max: 20)
+    |> unique_constraint(:username)
+    |> changeset(attrs)
+  end
+
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :email, :password, :bio, :username])
-    |> validate_required([:first_name, :last_name, :email, :password, :username])
-    |> validate_length(:username, min: 1, max: 20)
+    |> cast(attrs, [:first_name, :last_name, :email, :password, :bio])
+    |> validate_required([:first_name, :last_name, :email, :username])
     |> custom_validation(:email, &valid_email?/1, "Invalid email address")
-    |> unique_constraint(:username)
     |> validate_length(:password, min: 6, max: 50)
     |> custom_change(:password, :password_hash, &Comeonin.Bcrypt.hashpwsalt/1)
-    |> IO.inspect()
   end
 
   defp valid_email?(email) do

@@ -11,10 +11,17 @@ defmodule WorkshopsWeb.Router do
     pipe_through :api
 
     scope "/v1" do
-      resources "/users", UserController, except: [:new, :edit]
+      get "/users", UserController, :index
+      get "/users/:id", UserController, :show
+      post "/users", UserController, :create
+      put "/users", UserController, :update
+      delete "/users", UserController, :delete
+
       resources "/workshops", WorkshopController, except: [:new, :edit]
-      resources "/lessons", LessonController, only: [:show]
       post "/workshops/:id/load", WorkshopController, :load
+
+      get "/lessons/:id", LessonController, :show
+
       post "/sessions", SessionController, :create
     end
   end

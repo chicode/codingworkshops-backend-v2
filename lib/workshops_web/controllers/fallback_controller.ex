@@ -25,6 +25,10 @@ defmodule WorkshopsWeb.FallbackController do
     send_status(conn, :ok)
   end
 
+  def call(conn, {:ok}) do
+    send_status(conn, :ok)
+  end
+
   def call(conn, {:ok, data}) do
     send_status(conn, :ok)
   end

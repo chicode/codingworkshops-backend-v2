@@ -5,7 +5,7 @@ defmodule WorkshopsWeb.UserController do
 
   action_fallback WorkshopsWeb.FallbackController
 
-  plug :authenticate_user when action not in [:index, :show, :create]
+  plug :authenticate_user when action in [:update, :delete]
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -17,28 +17,19 @@ defmodule WorkshopsWeb.UserController do
     json(conn, user)
   end
 
-  def create(conn, %{"user" => user_params}) do
-    changeset = User.changeset(%User{}, user_params)
+  def create(_conn, %{"user" => user_params}) do
+    changeset = User.create_changeset(%User{}, user_params)
 
-    with {:ok, _user} <- Repo.insert(changeset) do
-      send_resp(conn, :created, "")
-    end
+    Repo.insert(changeset)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Repo.get!(User, id)
-    changeset = User.changeset(user, user_params)
+  def update(conn, %{"user" => user_params}) do
+    changeset = User.changeset(conn.assigns.user, user_params)
 
-    with {:ok, _user} <- Repo.update(changeset) do
-      send_resp(conn, :ok, "")
-    end
+    Repo.update(changeset)
   end
 
-  def delete(conn, %{"id" => id}) do
-    user = Repo.get!(User, id)
-
-    with {:ok, %User{}} <- Repo.delete(user) do
-      send_resp(conn, :ok, "")
-    end
+  def delete(conn) do
+    Repo.delete(conn.assigns.user)
   end
 end

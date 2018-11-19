@@ -1,6 +1,6 @@
 defmodule WorkshopsWeb.Auth do
   import Plug.Conn
-  import Phoenix.Controller
+  import WorkshopsWeb.Helpers
 
   def authenticate(username, password) do
     user = Workshops.Repo.get_by(Workshops.User, username: username)
@@ -30,9 +30,7 @@ defmodule WorkshopsWeb.Auth do
 
   def authenticate_user(conn, _opts) do
     if is_nil(conn.assigns.user) do
-      conn
-      |> put_status(:bad_request)
-      |> json(%{error: "Missing jwt token."})
+      send_json(conn, :bad_request, %{error: "Missing jwt token."})
     else
       conn
     end
