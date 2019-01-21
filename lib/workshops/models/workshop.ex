@@ -25,21 +25,28 @@ defmodule Workshops.Workshop do
 
   def create_changeset(workshop, attrs) do
     workshop
+    |> Workshops.Repo.preload([:author, :lessons])
     |> cast(attrs, [:name])
+    |> validate_required([:name])
+    |> unique_constraint(:name)
+    |> validate_length(:name, min: 1, max: 60)
+    |> custom_change(:name, :slug, &slugify/1)
     |> changeset(attrs)
   end
 
-  def changeset(workshop, attrs) do
+  def update_changeset(workshop, attrs) do
     workshop
-    |> Workshops.Repo.preload(:lessons)
+    |> Workshops.Repo.preload([:author, :lessons])
+    |> changeset(attrs)
+  end
+
+  def changeset(changeset, attrs) do
+    changeset
     |> cast(attrs, [:description, :source_url])
-    |> validate_required([:name, :description, :source_url])
-    |> unique_constraint(:name)
-    |> validate_length(:name, min: 1, max: 60)
+    |> validate_required([:description, :source_url])
     |> validate_length(:description, min: 1, max: 600)
     |> assoc_constraint(:author)
     |> custom_validation(:source_url, &valid_url?/1, "Invalid URL")
-    |> custom_change(:name, :slug, &slugify/1)
     |> cast_assoc(:lessons)
   end
 

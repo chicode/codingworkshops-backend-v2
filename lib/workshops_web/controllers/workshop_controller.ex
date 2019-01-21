@@ -34,7 +34,7 @@ defmodule WorkshopsWeb.WorkshopController do
 
   def update(conn, %{"id" => id, "workshop" => workshop_params}) do
     workshop = Repo.get!(Workshop, id)
-    changeset = Workshop.changeset(workshop, workshop_params)
+    changeset = Workshop.update_changeset(workshop, workshop_params)
 
     with {:ok} <- verify_ownership(conn, workshop) do
       Repo.update(changeset)
@@ -60,7 +60,7 @@ defmodule WorkshopsWeb.WorkshopController do
               # this check is necessary in case the yaml has numbered keys
               if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
                 workshop
-                |> Workshop.changeset(format_loaded(yaml))
+                |> Workshop.update_changeset(format_loaded(yaml))
                 |> Repo.update()
               else
                 {:error, "Malformed yaml"}

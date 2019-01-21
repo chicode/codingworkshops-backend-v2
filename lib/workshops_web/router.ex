@@ -21,10 +21,10 @@ defmodule WorkshopsWeb.Router do
       get "/workshops", WorkshopController, :index
       get "/workshops/:slug", WorkshopController, :show
       post "/workshops", WorkshopController, :create
-      patch "/workshops/:slug", WorkshopController, :update
-      delete "/workshops/:slug", WorkshopController, :delete
+      patch "/workshops/:id", WorkshopController, :update
+      delete "/workshops/:id", WorkshopController, :delete
 
-      post "/workshops/:slug/load", WorkshopController, :load
+      post "/workshops/:id/load", WorkshopController, :load
 
       get "/workshops/:slug/:index", LessonController, :show
 

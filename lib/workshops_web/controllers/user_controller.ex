@@ -15,7 +15,7 @@ defmodule WorkshopsWeb.UserController do
   def show(conn, %{"username" => username}) do
     User
     |> Repo.get_by!(username: username)
-    |> Repo.preload(:workshops)
+    |> Repo.preload(workshops: [:author])
     |> User.bare([:workshops])
   end
 

@@ -13,5 +13,6 @@ defmodule WorkshopsWeb.LessonController do
         where: w.slug == ^workshop_slug,
         preload: [slides: [:directions]]
     )
+    |> Lesson.bare([:slides])
   end
 end
