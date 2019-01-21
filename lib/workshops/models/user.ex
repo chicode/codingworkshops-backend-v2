@@ -3,11 +3,11 @@ defmodule Workshops.User do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @derive {Jason.Encoder, only: [:username, :first_name, :last_name, :email, :bio, :id]}
+  @base_properties [:username, :email, :bio, :id]
+
+  @derive {Jason.Encoder, only: @base_properties}
   schema "users" do
     field :username, :string
-    field :first_name, :string
-    field :last_name, :string
     field :email, :string
     field :bio, :string
     field :password, :string, virtual: true
@@ -17,10 +17,16 @@ defmodule Workshops.User do
     timestamps()
   end
 
+  def bare(workshop, additional \\ []) do
+    workshop
+    |> Map.from_struct()
+    |> Map.take(@base_properties ++ additional)
+  end
+
   def create_changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :password])
-    |> validate_required([:password])
+    |> cast(attrs, [:username, :password, :email])
+    |> validate_required([:username, :password, :email])
     |> validate_length(:username, min: 1, max: 20)
     |> unique_constraint(:username)
     |> changeset(attrs)
@@ -28,8 +34,7 @@ defmodule Workshops.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :email, :password, :bio])
-    |> validate_required([:first_name, :last_name, :email, :username])
+    |> cast(attrs, [:email, :password, :bio])
     |> custom_validation(:email, &valid_email?/1, "Invalid email address")
     |> validate_length(:password, min: 6, max: 50)
     |> custom_change(:password, :password_hash, &Comeonin.Bcrypt.hashpwsalt/1)

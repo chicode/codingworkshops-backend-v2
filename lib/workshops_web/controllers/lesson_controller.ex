@@ -3,16 +3,15 @@ defmodule WorkshopsWeb.LessonController do
 
   alias Workshops.{Lesson, Workshop, Repo}
 
-  def show(conn, %{"slug" => workshop_slug, "index" => index}) do
-    lesson =
-      Repo.one(
-        from l in Lesson,
-          where: l.index == ^index,
-          join: w in assoc(l, :workshop),
-          where: w.slug == ^workshop_slug,
-          preload: [slides: [:directions]]
-      )
+  action_fallback(WorkshopsWeb.FallbackController)
 
-    json(conn, lesson)
+  def show(conn, %{"slug" => workshop_slug, "index" => index}) do
+    Repo.one(
+      from l in Lesson,
+        where: l.index == ^index,
+        join: w in assoc(l, :workshop),
+        where: w.slug == ^workshop_slug,
+        preload: [slides: [:directions]]
+    )
   end
 end

@@ -12,8 +12,8 @@ defmodule WorkshopsWeb.Router do
 
     scope "/v1" do
       get "/users", UserController, :index
-      get "/users/me", UserController, :me
-      get "/users/:id", UserController, :show
+      post "/users/me", UserController, :me
+      get "/users/:username", UserController, :show
       post "/users", UserController, :create
       put "/users", UserController, :update
       delete "/users", UserController, :delete
@@ -21,8 +21,8 @@ defmodule WorkshopsWeb.Router do
       get "/workshops", WorkshopController, :index
       get "/workshops/:slug", WorkshopController, :show
       post "/workshops", WorkshopController, :create
-      put "/workshops", WorkshopController, :update
-      delete "/workshops", WorkshopController, :delete
+      patch "/workshops/:slug", WorkshopController, :update
+      delete "/workshops/:slug", WorkshopController, :delete
 
       post "/workshops/:slug/load", WorkshopController, :load
 

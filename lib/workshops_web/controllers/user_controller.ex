@@ -8,17 +8,19 @@ defmodule WorkshopsWeb.UserController do
   plug :force_authenticated when action in [:update, :delete, :me]
 
   def index(conn, _params) do
-    users = Repo.all(User)
-    json(conn, users)
+    User
+    |> Repo.all()
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Repo.get!(User, id)
-    json(conn, user)
+  def show(conn, %{"username" => username}) do
+    User
+    |> Repo.get_by!(username: username)
+    |> Repo.preload(:workshops)
+    |> User.bare([:workshops])
   end
 
   def me(conn, _params) do
-    json(conn, conn.assigns.user)
+    {:ok, conn.assigns.user}
   end
 
   def create(_conn, %{"user" => user_params}) do

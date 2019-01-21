@@ -8,25 +8,19 @@ defmodule WorkshopsWeb.WorkshopController do
   plug :force_authenticated when action not in [:index, :show]
 
   def index(conn, _params) do
-    workshops =
-      Workshop
-      |> Repo.all()
-      |> Repo.preload(:author)
-
-    json(conn, workshops)
+    Workshop
+    |> Repo.all()
+    |> Repo.preload(:author)
   end
 
   def show(conn, %{"slug" => slug}) do
-    workshop =
-      Workshop
-      |> Repo.get_by!(slug: slug)
-      |> Repo.preload([:author, :lessons])
-      |> Workshop.bare([:lessons])
-      |> MapExtras.get_and_update!(:lessons, fn lessons ->
-        Enum.map(lessons, &Workshops.Lesson.bare/1)
-      end)
-
-    json(conn, workshop)
+    Workshop
+    |> Repo.get_by!(slug: slug)
+    |> Repo.preload([:author, :lessons])
+    |> Workshop.bare([:lessons])
+    |> MapExtras.get_and_update!(:lessons, fn lessons ->
+      Enum.map(lessons, &Workshops.Lesson.bare/1)
+    end)
   end
 
   def create(conn, %{"workshop" => workshop_params}) do

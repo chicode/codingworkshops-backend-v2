@@ -10,7 +10,7 @@ defmodule WorkshopsWeb.SessionController do
       {:ok, user} ->
         {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user)
 
-        send_json(conn, :created, %{jwt: jwt, user: user})
+        {:ok, %{jwt: jwt, user: user}}
 
       {:error, _} ->
         {:error, "Incorrect email or password!"}

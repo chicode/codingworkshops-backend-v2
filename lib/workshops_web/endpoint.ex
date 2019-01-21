@@ -32,7 +32,7 @@ defmodule WorkshopsWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
-  plug CORSPlug, origin: ["http://localhost:8080"]
+  plug CORSPlug, origin: ["http://localhost:8080", "http://localhost:8081"]
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
