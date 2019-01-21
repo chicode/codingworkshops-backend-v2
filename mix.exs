@@ -44,8 +44,9 @@ defmodule Workshops.MixProject do
       {:comeonin, "~> 4.1.1"},
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.1"},
-      {:yaml_elixir, "~> 2.0"},
+      {:cors_plug, "~> 2.0"},
       {:httpoison, "~> 1.4"},
+      {:yaml_elixir, "~> 2.1.0"},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false}
     ]
   end

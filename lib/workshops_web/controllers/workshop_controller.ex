@@ -1,26 +1,30 @@
-require IEx
-
 defmodule WorkshopsWeb.WorkshopController do
   use WorkshopsWeb, :controller
 
   alias Workshops.{Workshop, Repo}
 
-  action_fallback WorkshopsWeb.FallbackController
+  action_fallback(WorkshopsWeb.FallbackController)
 
-  plug :authenticate_user when action not in [:index, :show]
+  plug :force_authenticated when action not in [:index, :show]
 
   def index(conn, _params) do
     workshops =
       Workshop
       |> Repo.all()
-      |> Repo.preload(:user)
+      |> Repo.preload(:author)
 
     json(conn, workshops)
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"slug" => slug}) do
     workshop =
-      Workshop |> Repo.get!(id) |> Repo.preload([:user, :lessons]) |> Workshop.bare([:lessons])
+      Workshop
+      |> Repo.get_by!(slug: slug)
+      |> Repo.preload([:author, :lessons])
+      |> Workshop.bare([:lessons])
+      |> MapExtras.get_and_update!(:lessons, fn lessons ->
+        Enum.map(lessons, &Workshops.Lesson.bare/1)
+      end)
 
     json(conn, workshop)
   end
@@ -56,7 +60,7 @@ defmodule WorkshopsWeb.WorkshopController do
 
     with {:ok} <- verify_ownership(conn, workshop) do
       case HTTPoison.get(workshop.source_url) do
-        {:ok, %HTTPoison.Response{body: body}} ->
+        {:ok, %{body: body}} ->
           case YamlElixir.read_from_string(body) do
             {:ok, yaml} ->
               # this check is necessary in case the yaml has numbered keys
@@ -107,9 +111,9 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   defp verify_ownership(conn, workshop) do
-    workshop = Repo.preload(workshop, :user)
+    workshop = Repo.preload(workshop, :author)
 
-    if workshop.user == conn.assigns.user do
+    if workshop.author == conn.assigns.user do
       {:ok}
     else
       {:error, :unauthorized}

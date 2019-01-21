@@ -3,7 +3,7 @@ defmodule Workshops.Workshop do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @base_properties [:name, :description, :source_url, :slug, :id, :user]
+  @base_properties [:name, :description, :source_url, :slug, :id, :author]
 
   @derive {Jason.Encoder, only: @base_properties}
   schema "workshops" do
@@ -11,7 +11,7 @@ defmodule Workshops.Workshop do
     field :description, :string
     field :source_url, :string
     field :slug, :string
-    belongs_to :user, Workshops.User
+    belongs_to :author, Workshops.User, foreign_key: :user_id
     has_many :lessons, Workshops.Lesson, on_replace: :delete
 
     timestamps()
@@ -37,7 +37,7 @@ defmodule Workshops.Workshop do
     |> unique_constraint(:name)
     |> validate_length(:name, min: 1, max: 60)
     |> validate_length(:description, min: 1, max: 600)
-    |> assoc_constraint(:user)
+    |> assoc_constraint(:author)
     |> custom_validation(:source_url, &valid_url?/1, "Invalid URL")
     |> custom_change(:name, :slug, &slugify/1)
     |> cast_assoc(:lessons)

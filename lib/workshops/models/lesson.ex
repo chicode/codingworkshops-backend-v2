@@ -3,7 +3,9 @@ defmodule Workshops.Lesson do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @derive {Jason.Encoder, only: [:id, :name, :description, :index, :slides]}
+  @base_properties [:id, :name, :description, :index]
+
+  @derive {Jason.Encoder, only: @base_properties}
   schema "lessons" do
     field :name, :string
     field :description, :string
@@ -12,6 +14,12 @@ defmodule Workshops.Lesson do
     has_many :slides, Workshops.Slide
 
     timestamps()
+  end
+
+  def bare(workshop, additional \\ []) do
+    workshop
+    |> Map.from_struct()
+    |> Map.take(@base_properties ++ additional)
   end
 
   def changeset(lesson, attrs) do

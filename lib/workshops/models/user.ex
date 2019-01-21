@@ -19,7 +19,7 @@ defmodule Workshops.User do
 
   def create_changeset(user, attrs) do
     user
-    |> cast(attrs, [:username])
+    |> cast(attrs, [:username, :password])
     |> validate_required([:password])
     |> validate_length(:username, min: 1, max: 20)
     |> unique_constraint(:username)

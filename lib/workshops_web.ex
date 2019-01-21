@@ -24,9 +24,10 @@ defmodule WorkshopsWeb do
       import Plug.Conn
       import WorkshopsWeb.Gettext
       alias WorkshopsWeb.Router.Helpers, as: Routes
-      import WorkshopsWeb.Auth, only: [authenticate_user: 2]
+      import WorkshopsWeb.Auth, only: [force_authenticated: 2]
       import WorkshopsWeb.Helpers
       alias WorkshopsWeb.Helpers.MapExtras
+      import Ecto.Query, only: [from: 2]
     end
   end
 

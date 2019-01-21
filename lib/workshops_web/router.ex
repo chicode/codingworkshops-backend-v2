@@ -12,15 +12,21 @@ defmodule WorkshopsWeb.Router do
 
     scope "/v1" do
       get "/users", UserController, :index
+      get "/users/me", UserController, :me
       get "/users/:id", UserController, :show
       post "/users", UserController, :create
       put "/users", UserController, :update
       delete "/users", UserController, :delete
 
-      resources "/workshops", WorkshopController, except: [:new, :edit]
-      post "/workshops/:id/load", WorkshopController, :load
+      get "/workshops", WorkshopController, :index
+      get "/workshops/:slug", WorkshopController, :show
+      post "/workshops", WorkshopController, :create
+      put "/workshops", WorkshopController, :update
+      delete "/workshops", WorkshopController, :delete
 
-      get "/lessons/:id", LessonController, :show
+      post "/workshops/:slug/load", WorkshopController, :load
+
+      get "/workshops/:slug/:index", LessonController, :show
 
       post "/sessions", SessionController, :create
     end

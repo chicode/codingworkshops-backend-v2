@@ -1,1 +1,1 @@
-alias Workshops.{Workshop, User, Lesson, Slide, Direction, Repo}
+alias Workshops.{User, Repo}

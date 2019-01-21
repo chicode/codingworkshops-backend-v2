@@ -28,9 +28,11 @@ defmodule WorkshopsWeb.Auth do
     end
   end
 
-  def authenticate_user(conn, _opts) do
+  def force_authenticated(conn, _opts) do
     if is_nil(conn.assigns.user) do
-      send_json(conn, :bad_request, %{error: "Missing jwt token."})
+      conn
+      |> send_json(:bad_request, %{error: "Missing jwt token."})
+      |> halt
     else
       conn
     end

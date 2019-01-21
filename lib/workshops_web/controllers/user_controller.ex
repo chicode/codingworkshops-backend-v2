@@ -5,7 +5,7 @@ defmodule WorkshopsWeb.UserController do
 
   action_fallback WorkshopsWeb.FallbackController
 
-  plug :authenticate_user when action in [:update, :delete]
+  plug :force_authenticated when action in [:update, :delete, :me]
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -15,6 +15,10 @@ defmodule WorkshopsWeb.UserController do
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
     json(conn, user)
+  end
+
+  def me(conn, _params) do
+    json(conn, conn.assigns.user)
   end
 
   def create(_conn, %{"user" => user_params}) do
