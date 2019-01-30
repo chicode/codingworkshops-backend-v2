@@ -3,7 +3,7 @@ defmodule Workshops.User do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @base_properties [:username, :email, :bio, :id]
+  @base_properties [:id, :username, :email, :bio, :id]
 
   @derive {Jason.Encoder, only: @base_properties}
   schema "users" do
@@ -13,6 +13,7 @@ defmodule Workshops.User do
     field :password, :string, virtual: true
     field :password_hash, :string
     has_many :workshops, Workshops.Workshop
+    has_many :projects, Workshops.Project
 
     timestamps()
   end
@@ -38,10 +39,5 @@ defmodule Workshops.User do
     |> custom_validation(:email, &valid_email?/1, "Invalid email address")
     |> validate_length(:password, min: 6, max: 50)
     |> custom_change(:password, :password_hash, &Comeonin.Bcrypt.hashpwsalt/1)
-  end
-
-  defp valid_email?(email) do
-    ~r/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    |> Regex.match?(email)
   end
 end

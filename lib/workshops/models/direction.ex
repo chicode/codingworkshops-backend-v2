@@ -3,7 +3,9 @@ defmodule Workshops.Direction do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @derive {Jason.Encoder, only: [:id, :description, :index]}
+  @base_properties [:id, :description, :index]
+
+  @derive {Jason.Encoder, only: @base_properties}
   schema "directions" do
     field :description, :string
     field :index, :integer

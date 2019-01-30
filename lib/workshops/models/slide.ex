@@ -3,7 +3,9 @@ defmodule Workshops.Slide do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @derive {Jason.Encoder, only: [:id, :name, :description, :index, :directions]}
+  @base_properties [:id, :name, :description, :index, :directions]
+
+  @derive {Jason.Encoder, only: @base_properties}
   schema "slides" do
     field :name, :string
     field :description, :string

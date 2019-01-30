@@ -27,7 +27,7 @@ defmodule WorkshopsWeb do
       import WorkshopsWeb.Auth, only: [force_authenticated: 2]
       import WorkshopsWeb.Helpers
       alias WorkshopsWeb.Helpers.MapExtras
-      import Ecto.Query, only: [from: 2]
+      import Ecto.Query
     end
   end
 

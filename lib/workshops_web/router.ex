@@ -11,22 +11,35 @@ defmodule WorkshopsWeb.Router do
     pipe_through :api
 
     scope "/v1" do
-      get "/users", UserController, :index
-      post "/users/me", UserController, :me
-      get "/users/:username", UserController, :show
-      post "/users", UserController, :create
-      put "/users", UserController, :update
-      delete "/users", UserController, :delete
+      scope "/workshops" do
+        get "/", WorkshopController, :index
+        get "/:slug", WorkshopController, :show
+        post "/", WorkshopController, :create
+        patch "/:id", WorkshopController, :update
+        delete "/:id", WorkshopController, :delete
 
-      get "/workshops", WorkshopController, :index
-      get "/workshops/:slug", WorkshopController, :show
-      post "/workshops", WorkshopController, :create
-      patch "/workshops/:id", WorkshopController, :update
-      delete "/workshops/:id", WorkshopController, :delete
+        post "/:id/load", WorkshopController, :load
 
-      post "/workshops/:id/load", WorkshopController, :load
+        get "/:slug/:index", LessonController, :show
+      end
 
-      get "/workshops/:slug/:index", LessonController, :show
+      scope "/users" do
+        get "/", UserController, :index
+        post "/me", UserController, :me
+        get "/:username", UserController, :show
+        post "/", UserController, :create
+        patch "/", UserController, :update
+        delete "/", UserController, :delete
+      end
+
+      scope "/projects" do
+        get "/", ProjectController, :index
+        get "/:username", ProjectController, :user_index
+        get "/:username/:slug", ProjectController, :show
+        post "/", ProjectController, :create
+        patch "/:id", ProjectController, :update
+        delete "/:id", ProjectController, :delete
+      end
 
       post "/sessions", SessionController, :create
     end

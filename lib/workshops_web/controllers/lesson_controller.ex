@@ -6,13 +6,12 @@ defmodule WorkshopsWeb.LessonController do
   action_fallback(WorkshopsWeb.FallbackController)
 
   def show(conn, %{"slug" => workshop_slug, "index" => index}) do
-    Repo.one(
-      from l in Lesson,
-        where: l.index == ^index,
-        join: w in assoc(l, :workshop),
-        where: w.slug == ^workshop_slug,
-        preload: [slides: [:directions]]
-    )
+    Lesson
+    |> where([l], l.index == ^index)
+    |> join(:inner, [l], w in assoc(l, :workshop))
+    |> where([l, w], w.slug == ^workshop_slug)
+    |> preload(slides: [:directions])
+    |> Repo.one()
     |> Lesson.bare([:slides])
   end
 end

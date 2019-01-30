@@ -34,9 +34,9 @@ defmodule WorkshopsWeb.WorkshopController do
 
   def update(conn, %{"id" => id, "workshop" => workshop_params}) do
     workshop = Repo.get!(Workshop, id)
-    changeset = Workshop.update_changeset(workshop, workshop_params)
 
     with {:ok} <- verify_ownership(conn, workshop) do
+      changeset = Workshop.update_changeset(workshop, workshop_params)
       Repo.update(changeset)
     end
   end
