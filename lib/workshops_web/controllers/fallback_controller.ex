@@ -5,7 +5,7 @@ defmodule WorkshopsWeb.FallbackController do
     errors =
       Ecto.Changeset.traverse_errors(changeset, &WorkshopsWeb.ErrorHelpers.translate_error/1)
 
-    send_json(conn, :unprocessable_entity, %{ok: false, errors: errors})
+    send_json(conn, :unprocessable_entity, %{errors: errors})
   end
 
   def call(conn, {:error, status}) when is_atom(status) do

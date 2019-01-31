@@ -11,6 +11,16 @@ defmodule Workshops.Helpers do
     end
   end
 
+  def custom_change_all(changeset, destination, change_func) do
+    case changeset do
+      %Ecto.Changeset{valid?: true} ->
+        put_change(changeset, destination, change_func.(changeset))
+
+      _ ->
+        changeset
+    end
+  end
+
   def custom_validation(changeset, field, validation_func, error) do
     validate_change(changeset, field, fn _, val ->
       if validation_func.(val), do: [], else: [{field, error}]

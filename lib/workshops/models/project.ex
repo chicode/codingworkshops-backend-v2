@@ -25,10 +25,20 @@ defmodule Workshops.Project do
   end
 
   def changeset(project, attrs) do
+    alias Workshops.Repo
+
     project
-    |> Workshops.Repo.preload([:author])
+    |> Repo.preload([:author])
     |> cast(attrs, [:name, :code, :spritesheet, :tilesheet, :flags])
-    |> validate_required([:name, :code, :spritesheet, :tilesheet, :flags])
+    |> custom_change_all(:name, fn %{data: data, changes: changes} ->
+      if is_nil(Map.get(changes, :name)) do
+        project_number = data.author |> Repo.preload(:projects) |> Map.get(:projects) |> length
+        "untitled #{project_number}"
+        # TODO project_number = number of projects with untitled in them
+      else
+        changes.name
+      end
+    end)
     |> validate_length(:name, min: 1, max: 60)
     |> custom_change(:name, :slug, &slugify/1)
     |> assoc_constraint(:author)

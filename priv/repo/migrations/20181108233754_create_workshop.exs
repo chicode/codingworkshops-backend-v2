@@ -7,7 +7,7 @@ defmodule Workshops.Repo.Migrations.CreateWorkshop do
       add(:slug, :string)
       add(:description, :text)
       add(:source_url, :string)
-      add(:user_id, references(:workshops))
+      add(:user_id, references(:users))
 
       timestamps()
     end

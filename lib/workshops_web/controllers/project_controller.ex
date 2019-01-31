@@ -11,7 +11,7 @@ defmodule WorkshopsWeb.ProjectController do
     Project
     |> Repo.all()
     |> Repo.preload(:author)
-    |> Enum.map(&Workshop.bare(&1, [:author]))
+    |> Enum.map(&Project.bare(&1, [:author]))
   end
 
   def user_index(conn, %{"username" => username}) do
@@ -28,7 +28,7 @@ defmodule WorkshopsWeb.ProjectController do
     |> join(:inner, [p], a in assoc(p, :author))
     |> where([p, a], a.username == ^username)
     |> preload([p, a], author: a)
-    |> Repo.one()
+    |> Repo.one!()
   end
 
   def create(conn, %{"project" => project_params}) do

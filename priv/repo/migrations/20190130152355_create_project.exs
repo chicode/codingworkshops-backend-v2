@@ -9,7 +9,7 @@ defmodule Workshops.Repo.Migrations.CreateProject do
       add(:spritesheet, :text)
       add(:tilesheet, :text)
       add(:flags, :text)
-      add(:user_id, references(:projects))
+      add(:user_id, references(:users))
 
       timestamps()
     end
