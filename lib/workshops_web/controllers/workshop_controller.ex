@@ -50,6 +50,7 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   def load(conn, %{"id" => id}) do
+    IO.inspect(id)
     workshop = Repo.get!(Workshop, id)
 
     with {:ok} <- verify_ownership(conn, workshop) do
