@@ -67,8 +67,8 @@ defmodule WorkshopsWeb.WorkshopController do
                 {:error, "Malformed yaml"}
               end
 
-            {:error} ->
-              {:error, "Malformed yaml"}
+            {:error, error} ->
+              {:error, error}
           end
 
         {:error, _error} ->

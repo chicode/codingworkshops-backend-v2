@@ -13,6 +13,7 @@ defmodule Workshops.Project do
     field :spritesheet, :string
     field :tilesheet, :string
     field :flags, :string
+    field :public, :boolean
     belongs_to :author, Workshops.User, foreign_key: :user_id
 
     timestamps()
@@ -29,7 +30,7 @@ defmodule Workshops.Project do
 
     project
     |> Repo.preload([:author])
-    |> cast(attrs, [:name, :code, :spritesheet, :tilesheet, :flags])
+    |> cast(attrs, [:name, :code, :spritesheet, :tilesheet, :flags, :public])
     |> custom_change_all(:name, fn %{data: data, changes: changes} ->
       if is_nil(Map.get(changes, :name)) do
         project_number = data.author |> Repo.preload(:projects) |> Map.get(:projects) |> length
@@ -39,6 +40,7 @@ defmodule Workshops.Project do
         changes.name
       end
     end)
+    |> default(:public, false)
     |> validate_length(:name, min: 1, max: 60)
     |> custom_change(:name, :slug, &slugify/1)
     |> assoc_constraint(:author)

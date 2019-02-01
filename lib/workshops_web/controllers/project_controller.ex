@@ -9,7 +9,7 @@ defmodule WorkshopsWeb.ProjectController do
 
   def index(conn, _params) do
     Project
-    |> Repo.all()
+    |> Repo.get_by(public: true)
     |> Repo.preload(:author)
     |> Enum.map(&Project.bare(&1, [:author]))
   end

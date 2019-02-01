@@ -21,6 +21,16 @@ defmodule Workshops.Helpers do
     end
   end
 
+  def default(changeset, field, default_val) do
+    custom_change(changeset, field, field, fn val ->
+      if is_nil(val) do
+        default_val
+      else
+        val
+      end
+    end)
+  end
+
   def custom_validation(changeset, field, validation_func, error) do
     validate_change(changeset, field, fn _, val ->
       if validation_func.(val), do: [], else: [{field, error}]
