@@ -50,30 +50,33 @@ defmodule WorkshopsWeb.WorkshopController do
   end
 
   def load(conn, %{"id" => id}) do
-    IO.inspect(id)
     workshop = Repo.get!(Workshop, id)
 
     with {:ok} <- verify_ownership(conn, workshop) do
-      case HTTPoison.get(workshop.source_url) do
-        {:ok, %{body: body}} ->
-          case YamlElixir.read_from_string(body) do
-            {:ok, yaml} ->
-              # this check is necessary in case the yaml has numbered keys
-              if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
-                workshop
-                |> Workshop.update_changeset(format_loaded(yaml))
-                |> Repo.update()
-              else
-                {:error, "Malformed yaml"}
-              end
+      load_workshop(workshop)
+    end
+  end
 
-            {:error, error} ->
-              {:error, error}
-          end
+  def load_workshop(workshop) do
+    case HTTPoison.get(workshop.source_url) do
+      {:ok, %{body: body}} ->
+        case YamlElixir.read_from_string(body) do
+          {:ok, yaml} ->
+            # this check is necessary in case the yaml has numbered keys
+            if yaml |> Map.keys() |> Enum.all?(&is_binary/1) do
+              workshop
+              |> Workshop.update_changeset(format_loaded(yaml))
+              |> Repo.update()
+            else
+              {:error, "Malformed yaml"}
+            end
 
-        {:error, _error} ->
-          {:error, "Could not reach the workshop source."}
-      end
+          {:error, error} ->
+            {:error, error}
+        end
+
+      {:error, _error} ->
+        {:error, "Could not reach the workshop source."}
     end
   end
 
