@@ -1,6 +1,4 @@
 defmodule WorkshopsWeb.ErrorHelpers do
-  import WorkshopsWeb.Gettext
-
   @moduledoc """
   Conveniences for translating and building error messages.
   """
