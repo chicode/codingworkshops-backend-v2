@@ -3,7 +3,7 @@ defmodule Workshops.Project do
   import Ecto.Changeset
   import Workshops.Helpers
 
-  @base_properties [:id, :name, :slug, :code, :spritesheet, :tilesheet, :flags]
+  @base_properties [:id, :name, :slug, :code, :spritesheet, :tilesheet, :flags, :language]
 
   @derive {Jason.Encoder, only: @base_properties}
   schema "projects" do
