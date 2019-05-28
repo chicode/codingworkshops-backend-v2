@@ -34,13 +34,12 @@ defmodule Workshops.Project do
     |> cast(attrs, [:name, :code, :spritesheet, :tilesheet, :flags, :public, :language])
     |> validate_required([:name, :code, :spritesheet, :tilesheet, :flags, :public, :language])
     |> custom_change_all(:name, fn %{data: data, changes: changes} ->
-      if is_nil(Map.get(changes, :name)) do
-        project_number = data.author |> Repo.preload(:projects) |> Map.get(:projects) |> length
-        "untitled #{project_number}"
-        # TODO project_number = number of projects with untitled in them
-      else
-        changes.name
-      end
+      Map.get(changes, :name) || Map.get(data, :name) ||
+        (
+          project_number = data.author |> Repo.preload(:projects) |> Map.get(:projects) |> length
+          "untitled #{project_number}"
+          # TODO project_number = number of projects with untitled in them
+        )
     end)
     |> default(:public, false)
     |> validate_length(:name, min: 1, max: 60)
